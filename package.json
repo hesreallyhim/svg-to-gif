@@ -1,6 +1,6 @@
 {
   "name": "svg-to-gif",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "Headless SVG to GIF/WebM/MP4 converter using Puppeteer + ffmpeg, with presets",
   "author": "Really Him",
   "type": "commonjs",
@@ -15,7 +15,14 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": ["svg", "gif", "puppeteer", "ffmpeg", "animation", "cli"],
+  "keywords": [
+    "svg",
+    "gif",
+    "puppeteer",
+    "ffmpeg",
+    "animation",
+    "cli"
+  ],
   "scripts": {
     "test": "jest",
     "test:integration": "SVG_TO_GIF_RUN_INTEGRATION=1 jest",
@@ -30,6 +37,7 @@
   },
   "devDependencies": {
     "eslint": "^9.39.1",
+    "husky": "^9.1.7",
     "image-size": "^1.0.0",
     "jest": "^29.0.0",
     "prettier": "^3.7.4"

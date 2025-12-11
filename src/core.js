@@ -91,13 +91,13 @@ function parseArgs(argv) {
 }
 
 function loadConfig(cwd) {
-  const configPath = path.join(cwd, "svg2gif.config.json");
+  const configPath = path.join(cwd, "svg-to-gif.config.json");
   if (!fs.existsSync(configPath)) return {};
   try {
     const raw = fs.readFileSync(configPath, "utf8");
     return JSON.parse(raw);
   } catch (e) {
-    console.error("Warning: failed to parse svg2gif.config.json:", e.message || e);
+    console.error("Warning: failed to parse svg-to-gif.config.json:", e.message || e);
     return {};
   }
 }
@@ -233,7 +233,7 @@ async function runConversion(params) {
   }
 
   const svgMarkup = fs.readFileSync(inputSvg, "utf8");
-  const framesDir = fs.mkdtempSync(path.join(os.tmpdir(), "svg2gif-"));
+  const framesDir = fs.mkdtempSync(path.join(os.tmpdir(), "svg-to-gif-"));
 
   console.error("Input:", inputSvg);
   console.error("Output:", outputPath);

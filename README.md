@@ -14,7 +14,7 @@ A small Node.js tool that converts SVG animations to GIF, WebM, or MP4 using hea
 - Optional palette-based GIF encoding for better color fidelity.
 - Validated duration / fps / dimensions to avoid accidents.
 - Optional `gifsicle` optimization (if installed).
-- Optional `svg2gif.config.json` in the working directory for defaults.
+- Optional `svg-to-gif.config.json` in the working directory for defaults.
 
 ## Install
 
@@ -44,7 +44,7 @@ Options:
 Config file (optional, values overridden by CLI flags):
 
 ```jsonc
-// svg2gif.config.json
+// svg-to-gif.config.json
 {
   "duration": 5,
   "fps": 24,
