@@ -19,8 +19,6 @@ A small Node.js tool that converts SVG animations to GIF, WebM, or MP4 using hea
 ## Install
 
 ```bash
-npm install
-# later, when published
 # npm install -g svg-to-gif
 ```
 
