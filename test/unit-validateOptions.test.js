@@ -36,3 +36,14 @@ test("validateOptions computes totalFrames and defaults", () => {
   expect(v.maxFrames).toBe(2000);
   expect(v.palette).toBe(true);
 });
+
+test("validateOptions falls back to DEFAULTS.maxFrames", () => {
+  expect(() =>
+    validateOptions({
+      ...DEFAULTS,
+      duration: 51, // within allowed range but exceeds default frame cap when combined with fps
+      fps: 40,
+      maxFrames: undefined,
+    })
+  ).toThrow(`max is ${DEFAULTS.maxFrames}`);
+});

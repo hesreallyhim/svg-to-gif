@@ -12,8 +12,8 @@ function buildFfmpegArgs(framesDir, outputPath, { fps, width, height, format, sc
   const shouldScale = hasWidth || hasHeight;
 
   let kernel = "lanczos";
-  if (scaleStrategy === "neighbor") kernel = "neighbor";
-  if (scaleStrategy === "bilinear") kernel = "bilinear";
+  if (scaleStrategy === "neighbor") {kernel = "neighbor";}
+  if (scaleStrategy === "bilinear") {kernel = "bilinear";}
 
   const filters = [];
   if (shouldScale) {

@@ -92,7 +92,7 @@ function parseArgs(argv) {
 
 function loadConfig(cwd) {
   const configPath = path.join(cwd, "svg-to-gif.config.json");
-  if (!fs.existsSync(configPath)) return {};
+  if (!fs.existsSync(configPath)) {return {};}
   try {
     const raw = fs.readFileSync(configPath, "utf8");
     return JSON.parse(raw);
@@ -293,7 +293,9 @@ ${svgMarkup}
         if (svg && typeof svg.setCurrentTime === "function") {
           try {
             svg.setCurrentTime(timeSec);
-          } catch (e) {}
+          } catch {
+            // Ignore errors from setCurrentTime - not all SVGs support this method
+          }
         }
       }, t);
 
@@ -319,8 +321,8 @@ ${svgMarkup}
       const shouldScale = hasWidth || hasHeight;
 
       let kernel = "lanczos";
-      if (scaleStrategy === "neighbor") kernel = "neighbor";
-      if (scaleStrategy === "bilinear") kernel = "bilinear";
+      if (scaleStrategy === "neighbor") {kernel = "neighbor";}
+      if (scaleStrategy === "bilinear") {kernel = "bilinear";}
 
       const filters = [];
       if (shouldScale) {
@@ -389,7 +391,9 @@ ${svgMarkup}
     await browser.close();
     try {
       fs.rmSync(framesDir, { recursive: true, force: true });
-    } catch {}
+    } catch {
+      // Ignore cleanup errors - temp directory may already be deleted
+    }
   }
 }
 
