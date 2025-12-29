@@ -1,0 +1,19 @@
+{
+  "name": "svg-to-gif CI shell",
+  "dockerFile": "../ci.Dockerfile",
+  "workspaceFolder": "/workspace",
+  "runArgs": ["--init", "--cap-add=SYS_ADMIN"],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "postCreateCommand": "npm ci",
+  "remoteEnv": {
+    "PUPPETEER_SKIP_DOWNLOAD": "true",
+    "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/chromium",
+    "SVG_TO_GIF_RUN_INTEGRATION": "1"
+  }
+}

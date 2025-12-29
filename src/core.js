@@ -237,6 +237,24 @@ async function runConversion(params) {
 
   const svgMarkup = fs.readFileSync(inputSvg, "utf8");
   const framesDir = fs.mkdtempSync(path.join(os.tmpdir(), "svg-to-gif-"));
+  const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "svg-to-gif-profile-"));
+
+  // Put crash dumps somewhere guaranteed-writable.
+  const crashDir = fs.mkdtempSync(path.join(os.tmpdir(), "svg-to-gif-crash-"));
+
+  // Optional: isolate HOME/XDG dirs to avoid mac sandbox / permission weirdness.
+  const sandboxHome = fs.mkdtempSync(path.join(os.tmpdir(), "svg-to-gif-home-"));
+  const configDir = path.join(sandboxHome, "config");
+  const cacheDir = path.join(sandboxHome, "cache");
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.mkdirSync(cacheDir, { recursive: true });
+
+  const launchEnv = {
+    ...process.env,
+    HOME: sandboxHome,
+    XDG_CONFIG_HOME: configDir,
+    XDG_CACHE_HOME: cacheDir,
+  };
 
   console.error("Input:", inputSvg);
   console.error("Output:", outputPath);
@@ -249,12 +267,32 @@ async function runConversion(params) {
   console.error(`Palette mode: ${palette && format === "gif"}`);
   console.error(`Frames dir: ${framesDir}`);
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-gpu"],
-  });
-
+  let browser;
   try {
+    browser = await puppeteer.launch({
+      headless: "new",
+
+      // Prefer NOT to fight Puppeteer's defaults. Keep args minimal and mac-friendly.
+      args: [
+        // Only keep --no-sandbox if you truly need it for your environment.
+        "--no-sandbox",
+        "--no-first-run",
+        "--no-default-browser-check",
+
+        // Make crashpad happy by providing a writable crash dumps directory.
+        `--crash-dumps-dir=${crashDir}`,
+
+        // Use an isolated profile dir.
+        `--user-data-dir=${userDataDir}`,
+      ],
+
+      // Don't remove Puppeteer's crashpad args; that often causes instability.
+      // ignoreDefaultArgs: ...   // intentionally omitted
+
+      userDataDir,
+      env: launchEnv,
+    });
+
     const page = await browser.newPage();
     await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme }]);
     await page.setViewport({
@@ -400,9 +438,21 @@ ${svgMarkup}
       console.error("gifsicle not found; skipping optimization");
     }
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
     try {
       fs.rmSync(framesDir, { recursive: true, force: true });
+    } catch {
+      // Ignore cleanup errors - temp directory may already be deleted
+    }
+    try {
+      fs.rmSync(userDataDir, { recursive: true, force: true });
+    } catch {
+      // Ignore cleanup errors - temp directory may already be deleted
+    }
+    try {
+      fs.rmSync(sandboxHome, { recursive: true, force: true });
     } catch {
       // Ignore cleanup errors - temp directory may already be deleted
     }
